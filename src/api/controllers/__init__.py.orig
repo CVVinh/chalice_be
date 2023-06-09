@@ -1,0 +1,24 @@
+from api.controllers.prefecture_controller import prefecture_bp
+from api.controllers.base_controller import base_bp
+from api.controllers.account_controller import account_bp
+<<<<<<< HEAD
+from api.controllers.vehicles_controller import vehicles_bp
+from api.controllers.makers_controller import makers_bp
+from api.controllers.stores_controller import stores_bp
+=======
+from api.controllers.rental_order_controller import rental_order_bp
+>>>>>>> 135962a6ffb3b91914c704a796fddcc53092bb96
+
+
+def init_app(app):
+    base_url = '/'
+    app.register_blueprint(prefecture_bp, url_prefix=base_url)
+    app.register_blueprint(base_bp, url_prefix=base_url)
+    app.register_blueprint(account_bp, url_prefix=base_url)
+<<<<<<< HEAD
+    app.register_blueprint(vehicles_bp, url_prefix=base_url)
+    app.register_blueprint(makers_bp, url_prefix=base_url)
+    app.register_blueprint(stores_bp, url_prefix=base_url)
+=======
+    app.register_blueprint(rental_order_bp, url_prefix=base_url)
+>>>>>>> 135962a6ffb3b91914c704a796fddcc53092bb96

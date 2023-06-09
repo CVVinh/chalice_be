@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "python_chalice_base",
+			"path": "../python_chalice_base"
+		}
+	],
+	"settings": {
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
+		"python.linting.ignorePatterns": [
+			".vscode/*.py",
+		],
+		"python.linting.flake8Args": [
+			"--max-line-length=150",
+		],
+		"python.formatting.autopep8Args": [
+			"--max-line-length=150",
+		],
+		"python.analysis.extraPaths": [
+			"service-api\\venv\\lib\\site-packages"
+		],
+		"rest-client.decodeEscapedUnicodeCharacters": true,
+		"[python]": {
+			"editor.defaultFormatter": "ms-python.autopep8"
+		},
+		"python.formatting.provider": "none"
+	}
+}

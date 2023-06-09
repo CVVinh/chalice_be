@@ -1,0 +1,88 @@
+{
+  "version": "0.1",
+  "app_name": "base-api",
+  "lambda_memory_size": 2048,
+  "manage_iam_role": false,
+  "api_gateway_endpoint_type": "REGIONAL",
+  "autogen_policy": false,
+  "lambda_timeout": 20,
+  "api_gateway_stage": "v1",
+  "environment_variables": {},
+  "stages": {
+    "local": {
+      "environment_variables": {
+        "env": "local",
+        "api_name": "local",
+        "chalice_debug": "true",
+        "json_pretty_print": "true",
+        "log_level": "DEBUG",
+        "custom_auth_key": "x-db_for_base-token",
+        "secret_id": "dummy",
+        "db_host": "localhost",
+        "db_name": "db_for_base",
+        "db_user": "user",
+        "db_password": "JyCydsk8"
+  }
+    },
+    "dev": {
+      "environment_variables": {
+        "env": "dev",
+        "api_name": "dev-base-api",
+        "chalice_debug": "true",
+        "json_pretty_print": "true",
+        "log_level": "DEBUG",
+        "custom_auth_key": "x-db_for_base-token",
+        "secret_id": "dummy"
+      },
+      "api_gateway_custom_domain": {
+        "domain_name": "",
+        "tls_version": "TLS_1_2|TLS_1_0",
+        "certificate_arn": "",
+        "url_prefix": ""
+      },
+      "iam_role_arn": "",
+      "subnet_ids": [""],
+      "security_group_ids": [""]
+    },
+    "stg": {
+      "environment_variables": {
+        "env": "stg",
+        "api_name": "stg-base-api",
+        "chalice_debug": "false",
+        "json_pretty_print": "false",
+        "log_level": "INFO",
+        "custom_auth_key": "x-db_for_base-token",
+        "secret_id": "dummy"
+      },
+      "api_gateway_custom_domain": {
+        "domain_name": "",
+        "tls_version": "TLS_1_2|TLS_1_0",
+        "certificate_arn": "",
+        "url_prefix": ""
+      },
+      "iam_role_arn": "",
+      "subnet_ids": [""],
+      "security_group_ids": [""]
+    },
+    "prd": {
+      "environment_variables": {
+        "env": "prd",
+        "api_name": "prd-base-api",
+        "chalice_debug": "false",
+        "json_pretty_print": "false",
+        "log_level": "INFO",
+        "custom_auth_key": "x-db_for_base-token",
+        "secret_id": "dummy"
+      },
+      "api_gateway_custom_domain": {
+        "domain_name": "",
+        "tls_version": "TLS_1_2|TLS_1_0",
+        "certificate_arn": "",
+        "url_prefix": ""
+      },
+      "iam_role_arn": "",
+      "subnet_ids": [""],
+      "security_group_ids": [""]
+    }
+  }
+}
