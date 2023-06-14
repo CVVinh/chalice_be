@@ -57,7 +57,7 @@ def create_rental_order(rental_order_data):
 
 
 def get_all_rental_order(request):
-    """ 
+    """
     Get all rental order list
 
     Argument:
@@ -79,7 +79,7 @@ def get_all_rental_order(request):
 
 def serialize_rental_order(rental_orders):
     """
-    Serialzie object rental order to json 
+    Serialzie object rental order to json
 
     Argument:
         rental_orders: parameter
@@ -129,7 +129,8 @@ def serialize_rental_order(rental_orders):
 
 def delete_rental_order(rental_order_id):
     """
-    Set state of rental order and rental order details to delete , set date deleted
+    Set state of rental order and rental order details to delete , set date
+    deleted
 
     Argument:
         rental_order_id: parameter
@@ -160,7 +161,8 @@ def delete_rental_order(rental_order_id):
 
 def restore_rental_order(rental_order_id):
     """
-    Set state of rental order and rental order details to normally , remove deleted date
+    Set state of rental order and rental order details to normally , remove
+    deleted date
 
     Argument:
         rental_order_id: parameter
@@ -215,7 +217,8 @@ def update_rental_order(rental_order_id, update_data):
     return (True, message_rental_order_constants.MESSAGE_SUCCESS_UPDATED)
 
 
-def update_rental_order_detail(rental_order_id, rental_order_detail_id, update_data):
+def update_rental_order_detail(rental_order_id, rental_order_detail_id,
+                               update_data):
     """
     update 1 record rental order details.
 
@@ -233,10 +236,12 @@ def update_rental_order_detail(rental_order_id, rental_order_detail_id, update_d
         return (False, message_rental_order_constants.MESSAGE_ERROR_NOT_EXIST)
 
     rental_order_detail = session.query(RentalOrderDetail).filter_by(
-        rentalOrderId=rental_order_id, rentalOrdersId=rental_order_detail_id).first()
+        rentalOrderId=rental_order_id,
+        rentalOrdersId=rental_order_detail_id).first()
 
     if rental_order_detail is None:
-        return (False, message_rental_order_details_constants.MESSAGE_ERROR_NOT_EXIST)
+        return (False,
+                message_rental_order_details_constants.MESSAGE_ERROR_NOT_EXIST)
 
     # Update rental order detail fields
     rental_order_detail.vehicleId = update_data.get(
@@ -247,15 +252,24 @@ def update_rental_order_detail(rental_order_id, rental_order_detail_id, update_d
         "quantity", rental_order_detail.quantity)
     rental_order_detail.amount = update_data.get(
         "amount", rental_order_detail.amount)
-    rental_order_detail.rentalStartDate = datetime.strptime(update_data.get(
-        "rentalStartDate"), "%Y/%m/%d") if update_data.get("rentalStartDate") else rental_order_detail.rentalStartDate
-    rental_order_detail.rentalEndDate = datetime.strptime(update_data.get(
-        "rentalEndDate"), "%Y/%m/%d") if update_data.get("rentalEndDate") else rental_order_detail.rentalEndDate
+    if update_data.get("rentalStartDate"):
+        rental_order_detail.rentalStartDate = datetime.strptime(
+            update_data.get("rentalStartDate"), "%Y/%m/%d")
+    else:
+        rental_order_detail.rentalStartDate = (
+            rental_order_detail.rentalStartDate)
+    if update_data.get("rentalEndDate"):
+        rental_order_detail.rentalEndDate = datetime.strptime(
+            update_data.get("rentalEndDate"), "%Y/%m/%d")
+    else:
+        rental_order_detail.rentalEndDate = rental_order_detail.rentalEndDate
 
     # Update the totalAmount in rental order
     rental_order.totalAmount = session.query(func.sum(
-        RentalOrderDetail.amount)).filter_by(rentalOrderId=rental_order_id).scalar()
+        RentalOrderDetail.amount)).filter_by(
+            rentalOrderId=rental_order_id).scalar()
 
     session.commit()
 
-    return (True, message_rental_order_details_constants.MESSAGE_SUCCESS_UPDATED)
+    return (True,
+            message_rental_order_details_constants.MESSAGE_SUCCESS_UPDATED)

@@ -3,7 +3,7 @@ from api.exceptions.exception_handler import errors_handle
 from api.models.transaction import transaction
 from api.services import rental_order_service
 from api.utils.status_response import success_response, error_response
-from chalice import Response, BadRequestError
+from chalice import BadRequestError
 from api.validators import rental_order_schema
 
 rental_order_bp = Blueprint(__name__)
@@ -78,7 +78,8 @@ def update_rental_order():
     return error_response({'message': result, 'status': 400}, 400)
 
 
-@rental_order_bp.route('/rentalOrder/rentailOrderDetail/update', methods=['PUT'])
+@rental_order_bp.route('/rentalOrder/rentailOrderDetail/update',
+                       methods=['PUT'])
 @errors_handle
 @transaction()
 def update_rental_order_details():

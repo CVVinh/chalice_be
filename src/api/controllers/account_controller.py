@@ -68,7 +68,7 @@ def update_account_controller():
 @errors_handle
 @transaction()
 def delete_account_controller():
-    request = account_bp.current_request.json_body
+    request = account_bp.current_request.query_params
     success, result = account_service.delete_account(request)
     if success:
         return success_response({"message": result, "status": 200})
@@ -78,7 +78,7 @@ def delete_account_controller():
 @account_bp.route('/func/add-account-base', methods=['POST'])
 @errors_handle
 @transaction()
-def add_account_controller():
+def add_account_base_controller():
     request = account_bp.current_request.json_body
     account_schema.validate_account_base_list(request)
     success, result = account_service.add_account_base(request)
@@ -90,7 +90,7 @@ def add_account_controller():
 @account_bp.route('/func/update-account-base', methods=['PUT'])
 @errors_handle
 @transaction()
-def update_account_controller():
+def update_account_base_controller():
     request = account_bp.current_request.json_body
     account_schema.validate_account_base_list(request)
     success, result = account_service.update_account_base_info(request)

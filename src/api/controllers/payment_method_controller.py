@@ -41,7 +41,8 @@ def add_multi_payment_method_controller():
 def update_payment_method_controller():
     request = payment_method_bp.current_request.json_body
     payment_method_schema.validate_put_payment_method_list(request)
-    success, result = payment_method_service.update_payment_method_info(request)
+    success, result = payment_method_service.update_payment_method_info(
+        request)
     if success:
         return success_response({"message": result, "status": 200})
     return error_response({"message": str(result), "status": 400}, 400)
@@ -94,11 +95,12 @@ def get_option_list_controller():
 @transaction()
 def export_payment_method_list_controller():
     request = payment_method_bp.current_request.query_params
-    success, result = payment_method_service.export_payment_method_list(request)
+    success, result = payment_method_service.export_payment_method_list(
+        request)
     file_name = f"payment_method_list{str(func.now())}"
     if success:
         return Response(
-            result, 
+            result,
             headers={
                 "Content-disposition": f"attachment; filename={file_name}".csv
             },

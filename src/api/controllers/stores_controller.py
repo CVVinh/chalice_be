@@ -4,8 +4,6 @@ from api.exceptions.exception_handler import errors_handle
 from api.models.transaction import transaction
 from api.services import stores_service
 from api.utils.status_response import success_response, error_response
-from sqlalchemy.sql import func
-from chalice import Response
 from api.validators import stores_schema
 
 stores_bp = Blueprint(__name__)
@@ -16,10 +14,11 @@ stores_bp = Blueprint(__name__)
 @transaction()
 def stores_list_controller():
     request = stores_bp.current_request.query_params
-    success, result = stores_service.get_stores_list(request)
-    if success:
-        return success_response({'message': result, 'status': 200})
-    return error_response({'message': str(result), 'status': 400}, 400)
+
+    try:
+        return stores_service.get_stores_list(request)
+    except Exception as e:
+        return error_response({"message": str(e)}, 400)
 
 # Add an order history
 

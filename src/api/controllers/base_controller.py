@@ -83,3 +83,14 @@ def export_base_list_controller():
             },
         )
     return error_response({'message': str(result)}, 400)
+
+
+@base_bp.route('/func/get-base-user-info', methods=['GET'])
+@errors_handle
+@transaction()
+def account_list_controller():
+    request = base_bp.current_request.query_params
+    success, result = base_service.get_base_user_info(request)
+    if success:
+        return success_response(result)
+    return error_response({'message': str(result), 'status': 400}, 400)

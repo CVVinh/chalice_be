@@ -4,8 +4,6 @@ from api.exceptions.exception_handler import errors_handle
 from api.models.transaction import transaction
 from api.services import makers_service
 from api.utils.status_response import success_response, error_response
-from sqlalchemy.sql import func
-from chalice import Response
 from api.validators import makers_schema
 
 makers_bp = Blueprint(__name__)

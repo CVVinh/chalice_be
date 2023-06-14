@@ -4,8 +4,6 @@ from api.exceptions.exception_handler import errors_handle
 from api.models.transaction import transaction
 from api.services import vehicles_service
 from api.utils.status_response import success_response, error_response
-from sqlalchemy.sql import func
-from chalice import Response
 from api.validators import vehicles_schema
 
 vehicles_bp = Blueprint(__name__)
@@ -16,10 +14,10 @@ vehicles_bp = Blueprint(__name__)
 @transaction()
 def order_history_list_controller():
     request = vehicles_bp.current_request.query_params
-    success, result = vehicles_service.get_vehicles_list(request)
-    if success:
-        return success_response({'message': result, 'status': 200})
-    return error_response({'message': str(result), 'status': 400}, 400)
+    try:
+        return vehicles_service.get_vehicles_list(request)
+    except Exception as e:
+        return error_response({"message": str(e)}, 400)
 
 # Add an order history
 
@@ -66,3 +64,25 @@ def delete_order_history_endpoint():
     if success:
         return success_response({'message': result, 'status': 200})
     return error_response({'message': str(result), 'status': 400}, 400)
+
+
+@vehicles_bp.route('/func/get-vehicles-by-id', methods=['GET'])
+@errors_handle
+@transaction()
+def get_vehicles_by_id_controller():
+    request = vehicles_bp.current_request.query_params
+    try:
+        return vehicles_service.get_vehicle_by_id(request)
+    except Exception as e:
+        return error_response({"message": str(e)}, 400)
+
+
+@vehicles_bp.route('/func/get-vehicles-by-param', methods=['GET'])
+@errors_handle
+@transaction()
+def get_vehicles_by_param_controller():
+    request = vehicles_bp.current_request.query_params
+    try:
+        return vehicles_service.get_vehicle_by_params(request)
+    except Exception as e:
+        return error_response({"message": str(e)}, 400)

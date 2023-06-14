@@ -1,9 +1,7 @@
-from sqlalchemy.orm import joinedload
 from api.models.models import MakersMaster, VehiclesMaster
-from sqlalchemy.sql import func
 from api.models import session
 from api.messages import MessageResponse
-from api.utils.utils import add_update_object, object_as_dict, paginate, export, format_day_and_bool_dict
+from api.utils.utils import add_update_object, object_as_dict, paginate
 
 message_makers_constant = MessageResponse()
 message_makers_constant.setName("Makers")
@@ -18,10 +16,11 @@ def get_makers_list(query_params):
     Returns:
         Response: Returning a message, lists.
     """
+    # Get data of list in DB
     try:
         result_list = session.query(MakersMaster).all()
-        makers_list = [object_as_dict(order)
-                       for order in result_list]
+        makers_list = [object_as_dict(maker)
+                       for maker in result_list]
 
         # Paginate by pageNum & pageSize
         paginated_lst = paginate(makers_list, query_params)
@@ -101,7 +100,7 @@ def delete_makers(query_params):
     """
     makers_id = query_params.get("makerId")
 
-    # Cập nhật các vehicle liên quan
+    # Set vehicle.makerId = None if it match with makers_id
     vehicle_has_maker_id = session.query(VehiclesMaster).filter(
         VehiclesMaster.makerId == makers_id
     ).all()

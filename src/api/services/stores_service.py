@@ -1,9 +1,7 @@
-from sqlalchemy.orm import joinedload
 from api.models.models import StoresMaster, VehiclesMaster
-from sqlalchemy.sql import func
 from api.models import session
 from api.messages import MessageResponse
-from api.utils.utils import add_update_object, object_as_dict, paginate, export, format_day_and_bool_dict
+from api.utils.utils import add_update_object, object_as_dict, paginate
 
 message_stores_constant = MessageResponse()
 message_stores_constant.setName("Stores")
@@ -18,6 +16,7 @@ def get_stores_list(query_params):
     Returns:
         Response: Returning a message, lists.
     """
+    # Get data of list in DB
     try:
         result_list = session.query(StoresMaster).all()
         stores_list = [object_as_dict(order)
@@ -25,14 +24,14 @@ def get_stores_list(query_params):
 
         # Paginate by pageNum & pageSize
         paginated_lst = paginate(stores_list, query_params)
-        return True, {
+        return {
             "stores_list": paginated_lst,
             "totalRecords": len(stores_list),
             "message": message_stores_constant.MESSAGE_SUCCESS_GET_LIST,
             "status": 200
         }
     except Exception as e:
-        return False, {
+        return {
             "message": str(e),
             "status": 500
         }
@@ -101,7 +100,7 @@ def delete_stores(query_params):
     """
     stores_id = query_params.get("storeId")
 
-    # Cập nhật các vehicle liên quan
+    # Set vehicle.storeId = None if it match with stores_id
     vehicle_has_stores_id = session.query(VehiclesMaster).filter(
         VehiclesMaster.storeId == stores_id
     ).all()

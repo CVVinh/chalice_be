@@ -51,8 +51,8 @@ def add_prefecture(prefecture_obj):
 
     # Find the prefecture name with prefecture_name in the database
     check_prefecture_name = session.query(Prefecture) \
-                                   .filter(Prefecture.prefName == prefecture_name) \
-                                   .first()
+        .filter(Prefecture.prefName == prefecture_name) \
+        .first()
 
     # If the prefecture name already exists, return a message
     if check_prefecture_name is not None:
@@ -87,8 +87,9 @@ def update_prefecture(prefecture_obj):
 
     # Fine the prefecture name with prefecture_name in the database
     check_prefecture_name = session.query(Prefecture) \
-                                   .filter(Prefecture.prefName == prefecture_name, Prefecture.prefId != prefecture_id) \
-                                   .first()
+        .filter(Prefecture.prefName == prefecture_name,
+                Prefecture.prefId != prefecture_id) \
+        .first()
 
     # If the prefecture name already exists, return a message
     if check_prefecture_name is not None:

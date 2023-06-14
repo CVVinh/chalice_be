@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Text, CHAR, Integer, DateTime, BIGINT, Boolean, ForeignKey, Date, Float, ForeignKeyConstraint
+from sqlalchemy import Column, String, Text, Integer, DateTime, Boolean, Float
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func, text
@@ -64,7 +65,7 @@ class AccountBaseMaster(Base):
     deletedBy = Column("deleted_by", ForeignKey(
         "m_accounts.account_id"), comment="削除者")
     isDeleted = Column("is_deleted", Boolean, nullable=False,
-                       server_default=text("False"), comment="登録旗deleted: 0：消去未 ,1：消去済")
+                       server_default=text("False"))
 
     baseMaster = relationship("BaseMaster", back_populates="accountBaseMaster")
 
@@ -113,13 +114,6 @@ class Prefecture(Base):
     prefName = Column("pref_name", String(200), comment="名前県")
 
 
-class MakersMaster(Base):
-    __tablename__ = 'm_makers'
-
-    makerId = Column("maker_id", Integer, primary_key=True, autoincrement=True, comment="メーカーID")
-    makerName = Column("maker_name", String(200), comment="名前メーカー")
-
-
 class ModelsMaster(Base):
     __tablename__ = 'm_models'
 
@@ -127,13 +121,18 @@ class ModelsMaster(Base):
     makerName = Column("model_name", String(200), comment="名前モデル")
 
 
+class MakersMaster(Base):
+    __tablename__ = 'm_makers'
+
+    makerId = Column("maker_id", Integer, primary_key=True, comment="メーカーID")
+    makerName = Column("maker_name", String(200), comment="名前メーカー")
+
+
 class VehiclesMaster(Base):
     __tablename__ = 'm_vehicles'
 
-    vehicleId = Column("vehicle_id", Integer, primary_key=True, autoincrement=True, comment="車両ID")
+    vehicleId = Column("vehicle_id", Integer, primary_key=True, comment="車両ID")
     vehicleName = Column("vehicle_name", String(200), comment="名前車両")
-    makerId = Column("maker_id", Integer, comment="メーカーID")
-    storeId = Column("store_id", Integer, comment="売上ID")
     makerId = Column("maker_id", Integer, ForeignKey("m_makers.maker_id"),
                      comment="メーカーID")
     storeId = Column("store_id", Integer, ForeignKey("m_stores.store_id"),
@@ -142,12 +141,31 @@ class VehiclesMaster(Base):
     mileage = Column("mileage", Integer, comment="車の走行距離(km)")
     vehicleStatus = Column("vehicle_status", Integer,
                            comment="車の状態：1-利用可能、2-レンタル済、3-保守中")
+    vehicleSeat = Column("vehicle_seat", Integer, comment="Số lượng ghế")
+    vehicleType = Column("vehicle_type", String(200), comment="Kiểu xe")
+    vehicleValue = Column("vehicle_value", Float, comment="Giá xe")
+    vehicleEngine = Column("vehicleEngine", String(200), comment="Động cơ xe")
+    vehicleRating = Column("vehicleRating", String(5), comment="Xếp hạng")
+    vehicleConsumedEnergy = Column("vehicleConsumedEnergy", String(100),
+                                   comment="Năng lượng tiêu hao trên 100km")
+    vehicleDescribe = Column("vehicle_describe", String(200), comment="Mô tả")
+    images = relationship('VehicleImage', back_populates='vehicle')
+
+
+class VehicleImage(Base):
+    __tablename__ = 'm_vehicle_img'
+
+    vehicleImageid = Column(Integer, primary_key=True)
+    vehicleId = Column(Integer, ForeignKey('m_vehicles.vehicle_id'))
+    image = Column(String(255))
+
+    vehicle = relationship('VehiclesMaster', back_populates='images')
 
 
 class StoresMaster(Base):
     __tablename__ = 'm_stores'
 
-    storeId = Column("store_id", Integer, primary_key=True, autoincrement=True, comment="売上ID")
+    storeId = Column("store_id", Integer, primary_key=True, comment="売上ID")
     storeName = Column("store_name", String(200), comment="名前売上")
 
 
@@ -157,6 +175,7 @@ class OptionsMaster(Base):
     optionId = Column("option_id", Integer, primary_key=True,
                       comment="オプションID")
     optionName = Column("option_name", String(200), comment="名前オプション")
+    optionValue = Column("option_value", Float, comment="Giá option")
 
 
 class InsurancesMaster(Base):
@@ -165,6 +184,7 @@ class InsurancesMaster(Base):
     insuranceId = Column("insurance_id", Integer, primary_key=True,
                          comment="保険ID")
     insuranceName = Column("insurance_name", String(200), comment="名前保険")
+    insuranceValue = Column("insurance_value", Float, comment="Giá bảo hiểm")
 
 
 class PaymentMethodsMaster(Base):
