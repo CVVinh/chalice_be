@@ -9,6 +9,8 @@ from api.controllers.insurance_controller import insurance_bp
 from api.controllers.option_controller import option_bp
 from api.controllers.payment_method_controller import payment_method_bp
 from api.controllers.vehicles_img_controller import vehicles_img_bp
+from api.controllers.rental_order_cart_controller import rental_order_cart_bp
+from api.controllers.models_controller import models_bp
 
 
 def init_app(app):
@@ -24,3 +26,5 @@ def init_app(app):
     app.register_blueprint(option_bp, url_prefix=base_url)
     app.register_blueprint(payment_method_bp, url_prefix=base_url)
     app.register_blueprint(vehicles_img_bp, url_prefix=base_url)
+    app.register_blueprint(rental_order_cart_bp, url_prefix=base_url)
+    app.register_blueprint(models_bp, url_prefix=base_url) 

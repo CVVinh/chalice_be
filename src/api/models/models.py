@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, Integer, DateTime, Boolean, Float
+from sqlalchemy import Column, Numeric, String, Text, Integer, DateTime, Boolean, Float
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -117,8 +117,8 @@ class Prefecture(Base):
 class ModelsMaster(Base):
     __tablename__ = 'm_models'
 
-    makerId = Column("model_id", Integer, primary_key=True, comment="モデルID")
-    makerName = Column("model_name", String(200), comment="名前モデル")
+    modelId = Column("model_id", Integer, primary_key=True, comment="モデルID")
+    modelName = Column("model_name", String(200), comment="名前モデル")
 
 
 class MakersMaster(Base):
@@ -142,7 +142,8 @@ class VehiclesMaster(Base):
     vehicleStatus = Column("vehicle_status", Integer,
                            comment="車の状態：1-利用可能、2-レンタル済、3-保守中")
     vehicleSeat = Column("vehicle_seat", Integer, comment="Số lượng ghế")
-    vehicleType = Column("vehicle_type", String(200), comment="Kiểu xe")
+    vehicleModel = Column("vehicle_model", Integer,
+                          ForeignKey("m_models.model_id"), comment="Kiểu xe")
     vehicleValue = Column("vehicle_value", Float, comment="Giá xe")
     vehicleEngine = Column("vehicleEngine", String(200), comment="Động cơ xe")
     vehicleRating = Column("vehicleRating", String(5), comment="Xếp hạng")
@@ -243,6 +244,42 @@ class RentalOrderDetail(Base):
     rentalStartDate = Column("rental_start_date", DateTime, nullable=False,
                              comment="レンタル開始日")
     rentalEndDate = Column("rental_end_date", DateTime, nullable=False,
+                           comment="レンタル終了日")
+    createdAt = Column("created_at", DateTime, nullable=False,
+                       server_default=func.now(), comment="作成日時:プログラムでは設定しない")
+    createdBy = Column("created_by", ForeignKey("m_accounts.account_id"),
+                       comment="作成者")
+    modifiedAt = Column("modified_at", DateTime, nullable=False,
+                        server_default=func.now(), comment="更新日時:プログラムでは設定しない")
+    modifiedBy = Column("modified_by", ForeignKey("m_accounts.account_id"),
+                        comment="更新者")
+    deletedAt = Column("deleted_at", DateTime, comment="削除日時")
+    deletedBy = Column("deleted_by", ForeignKey("m_accounts.account_id"),
+                       comment="削除者")
+    isDeleted = Column("is_deleted", Boolean, nullable=False,
+                       server_default=text("False"),
+                       comment="登録旗deleted: 0：消去未 ,1：消去済")
+
+
+class RentalOrderCart(Base):
+    __tablename__ = 't_rental_order_cart'
+
+    rentalOrdersCartId = Column("rental_orders_cart_id", Integer,
+                                primary_key=True,
+                                comment="発注明細ID:自動採番")
+    accountId = Column("account_id", ForeignKey(
+        "m_accounts.account_id"), comment='アカウントID')
+    vehicleId = Column("vehicle_id", ForeignKey("m_vehicles.vehicle_id"),
+                       nullable=False, comment="車両ID")
+    optionId = Column("option_id", ForeignKey("m_options.option_id"),
+                      comment="車両ID")
+    insuranceId = Column("insurance_id", ForeignKey(
+        "m_insurances.insurance_id"), comment="保険ID")
+    statusCart = Column("status_cart", Integer, nullable=False, server_default=text("0"),
+                        comment="0: giỏ hàng; 1: đã đặt")
+    rentalStartDate = Column("rental_start_date", DateTime,
+                             comment="レンタル開始日")
+    rentalEndDate = Column("rental_end_date", DateTime,
                            comment="レンタル終了日")
     createdAt = Column("created_at", DateTime, nullable=False,
                        server_default=func.now(), comment="作成日時:プログラムでは設定しない")
