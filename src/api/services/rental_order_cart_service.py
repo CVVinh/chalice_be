@@ -156,9 +156,9 @@ def get_rental_order_cart_list(query_params):
         query_params)
     handlerGroupByData = handlerInclueData(filter_param_get_list)
 
-    paginated_lst = paginate(filter_param_get_list, query_params)
-    return (True, {"mstRenOrdCart": handlerGroupByData,
-                   "total": len(handlerGroupByData),
+    paginated_lst = paginate(handlerGroupByData, query_params)
+    return (True, {"mstRenOrdCart": paginated_lst,
+                   "total": len(paginated_lst),
                    "message": message_rental_order_cart_constant.MESSAGE_SUCCESS_GET_LIST,
                    "status": 200})
 
