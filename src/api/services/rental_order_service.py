@@ -49,7 +49,7 @@ def create_rental_order(rental_order_data):
         session.add(new_rental_order_detail)
 
     # Update the total amount of the rental order
-    new_rental_order.totalAmount = total_amount
+    # new_rental_order.totalAmount = total_amount
 
     session.commit()
 

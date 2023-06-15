@@ -31,13 +31,6 @@ CREATE TABLE `alembic_version` (
   `version_num` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Đang đổ dữ liệu cho bảng `alembic_version`
---
-
-INSERT INTO `alembic_version` (`version_num`) VALUES
-('0ac9154ee0ec');
-
 -- --------------------------------------------------------
 
 --
