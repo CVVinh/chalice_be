@@ -46,18 +46,23 @@ def create_vehicles_img(query_params):
         The message.
     """
     vehicle_img_id = query_params.get("vehicleImageid")
-
-    # Check if the vehicle_img exists in the database
+    image = query_params.get("image")
+    # Kiểm tra xem vehicle_img đã tồn tại trong cơ sở dữ liệu chưa
     existing_vehicle_img = session.query(VehicleImage).filter(
         VehicleImage.vehicleImageid == vehicle_img_id
     ).first()
-
     if existing_vehicle_img:
         return (False, "vehicle_img already exists")
     # vehicle_image = query_params.get("vehicleImage")
-    img = VehicleImage()
-    # img.vehicleImage = "img/" + vehicle_image  # Lưu trữ đường dẫn
-    session.add(add_update_object(query_params, img))
+    # Lưu trữ hình ảnh vào thư mục "img"
+    # file_content = image
+    # with open(f'src/api/img/{image}.jpg', 'wb') as file:
+    #     file.write(file_content)
+    # Thêm thông tin hình ảnh vào cơ sở dữ liệu
+    new_vehicle_img = VehicleImage(vehicleImageid=vehicle_img_id,
+                                   image=f'{image}')
+    session.add(new_vehicle_img)
+    # session.add(add_update_object(query_params, img))
     session.commit()
 
     return (True, message_vehicle_img_constant.MESSAGE_SUCCESS_CREATED)

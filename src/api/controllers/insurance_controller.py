@@ -15,6 +15,8 @@ insurance_bp = Blueprint(__name__)
 @transaction()
 def add_isurances_controller():
     request = insurance_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     isurance_schema.validate_post_isurance_list(request)
     success, result = isurance_service.add_isurances(request)
     if success:
@@ -27,6 +29,8 @@ def add_isurances_controller():
 @transaction()
 def add_multi_isurances_controller():
     requests = insurance_bp.current_request.json_body
+    if requests is not None and 'params' in requests:
+        requests = requests['params']
     for item in requests:
         isurance_schema.validate_post_isurance_list(item)
     success, result = isurance_service.add_multi_isurances(requests)
@@ -40,6 +44,8 @@ def add_multi_isurances_controller():
 @transaction()
 def update_isurances_controller():
     request = insurance_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     isurance_schema.validate_put_isurance_list(request)
     success, result = isurance_service.update_isurances_info(request)
     if success:
@@ -52,6 +58,8 @@ def update_isurances_controller():
 @transaction()
 def delete_isurances_controller():
     request = insurance_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = isurance_service.delete_isurances(request)
     if success:
         return success_response({"message": result, "status": 200})
@@ -63,6 +71,8 @@ def delete_isurances_controller():
 @transaction()
 def delete_multi_isurances_controller():
     request = insurance_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     _, result = isurance_service.delete_multi_isurances(request)
     return success_response({"message": result, "status": 200})
 
@@ -72,6 +82,8 @@ def delete_multi_isurances_controller():
 @transaction()
 def get_isurances_info_controller():
     request = insurance_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = isurance_service.get_isurances_info(request)
     if success:
         return success_response(result)
@@ -83,6 +95,8 @@ def get_isurances_info_controller():
 @transaction()
 def get_isurances_list_controller():
     request = insurance_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = isurance_service.get_isurances_list(request)
     if success:
         return success_response(result)
@@ -94,6 +108,8 @@ def get_isurances_list_controller():
 @transaction()
 def export_isurances_list_controller():
     request = insurance_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = isurance_service.export_isurances_list(request)
     file_name = f"isurance_list{str(func.now())}"
     if success:

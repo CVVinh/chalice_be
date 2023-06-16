@@ -9,11 +9,14 @@ from chalice import Response
 
 option_bp = Blueprint(__name__)
 
+
 @option_bp.route('/func/add-option', methods=['POST'])
 @errors_handle
 @transaction()
 def add_option_controller():
     request = option_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     option_schema.validate_post_option_list(request)
     success, result = option_service.add_option(request)
     if success:
@@ -26,6 +29,8 @@ def add_option_controller():
 @transaction()
 def add_multi_option_controller():
     requests = option_bp.current_request.json_body
+    if requests is not None and 'params' in requests:
+        requests = requests['params']
     for item in requests:
         option_schema.validate_post_option_list(item)
     success, result = option_service.add_multi_option(requests)
@@ -39,6 +44,8 @@ def add_multi_option_controller():
 @transaction()
 def update_option_controller():
     request = option_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     option_schema.validate_put_option_list(request)
     success, result = option_service.update_option_info(request)
     if success:
@@ -51,6 +58,8 @@ def update_option_controller():
 @transaction()
 def delete_option_controller():
     request = option_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = option_service.delete_option(request)
     if success:
         return success_response({"message": result, "status": 200})
@@ -62,6 +71,8 @@ def delete_option_controller():
 @transaction()
 def delete_multi_option_controller():
     request = option_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     _, result = option_service.delete_multi_option(request)
     return success_response({"message": result, "status": 200})
 
@@ -71,6 +82,8 @@ def delete_multi_option_controller():
 @transaction()
 def get_option_info_controller():
     request = option_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = option_service.get_option_info(request)
     if success:
         return success_response(result)
@@ -82,6 +95,8 @@ def get_option_info_controller():
 @transaction()
 def get_option_list_controller():
     request = option_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = option_service.get_option_list(request)
     if success:
         return success_response(result)
@@ -93,11 +108,13 @@ def get_option_list_controller():
 @transaction()
 def export_option_list_controller():
     request = option_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = option_service.export_option_list(request)
     file_name = f"option_list{str(func.now())}"
     if success:
         return Response(
-            result, 
+            result,
             headers={
                 "Content-disposition": f"attachment; filename={file_name}".csv
             },

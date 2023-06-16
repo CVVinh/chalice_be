@@ -15,6 +15,8 @@ rental_order_cart_bp = Blueprint(__name__)
 @transaction()
 def add_rental_order_cart_controller():
     request = rental_order_cart_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     rental_order_cart_schema.validation_create_rental_order_cart(request)
     success, result = rental_order_cart_service.add_rental_order_cart(request)
     if success:
@@ -27,6 +29,8 @@ def add_rental_order_cart_controller():
 @transaction()
 def add_multi_rental_order_cart_controller():
     requests = rental_order_cart_bp.current_request.json_body
+    if requests is not None and 'params' in requests:
+        requests = requests['params']
     for item in requests:
         rental_order_cart_schema.validation_create_rental_order_cart(item)
     success, result = rental_order_cart_service.add_multi_rental_order_cart(
@@ -41,6 +45,8 @@ def add_multi_rental_order_cart_controller():
 @transaction()
 def update_rental_order_cart_controller():
     request = rental_order_cart_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     rental_order_cart_schema.validation_update_rental_order_cart(request)
     success, result = rental_order_cart_service.update_rental_order_cart_info(
         request)
@@ -54,6 +60,8 @@ def update_rental_order_cart_controller():
 @transaction()
 def delete_soft_rental_order_cart_controller():
     request = rental_order_cart_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = rental_order_cart_service.delete_soft_rental_order_cart(
         request)
     if success:
@@ -66,6 +74,8 @@ def delete_soft_rental_order_cart_controller():
 @transaction()
 def delete_hard_rental_order_cart_controller():
     request = rental_order_cart_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = rental_order_cart_service.delete_hard_rental_order_cart(
         request)
     if success:
@@ -78,6 +88,8 @@ def delete_hard_rental_order_cart_controller():
 @transaction()
 def delete_soft_multi_rental_order_cart_controller():
     request = rental_order_cart_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     _, result = rental_order_cart_service.delete_soft_multi_rental_order_cart(
         request)
     return success_response({"message": result, "status": 200})
@@ -88,6 +100,8 @@ def delete_soft_multi_rental_order_cart_controller():
 @transaction()
 def get_rental_order_cart_list_controller():
     request = rental_order_cart_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = rental_order_cart_service.get_rental_order_cart_info(
         request)
     if success:
@@ -100,6 +114,8 @@ def get_rental_order_cart_list_controller():
 @transaction()
 def get_rental_order_cart_list_controller():
     request = rental_order_cart_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = rental_order_cart_service.get_rental_order_cart_list(
         request)
     if success:
@@ -112,6 +128,8 @@ def get_rental_order_cart_list_controller():
 @transaction()
 def export_rental_order_cart_list_controller():
     request = rental_order_cart_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = rental_order_cart_service.export_rental_order_cart_list(
         request)
     file_name = f"rental_order_cart_list{str(func.now())}"

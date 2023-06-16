@@ -22,10 +22,10 @@ def get_vehicles_list(query_params):
         vehicles_list = session.query(VehiclesMaster).all()
         stores_list = session.query(StoresMaster).all()
         makers_list = session.query(MakersMaster).all()
-        model_list = session.query(ModelsMaster).all()
+        models_list = session.query(ModelsMaster).all()
 
         combined_result = combine_vehicles_and_detail(
-            vehicles_list, stores_list, makers_list, model_list)
+            vehicles_list, stores_list, makers_list, models_list)
         # Paginate by pageNum & pageSize
         paginated_lst = paginate(combined_result, query_params)
         return {
@@ -44,7 +44,7 @@ def get_vehicles_list(query_params):
 
 
 def combine_vehicles_and_detail(vehicles_list, stores_list,
-                                makers_list, model_list):
+                                makers_list, models_list):
     """
     Get all record of VehiclesMaster & StoresMaster & MakersMaster .
 
@@ -62,7 +62,7 @@ def combine_vehicles_and_detail(vehicles_list, stores_list,
         vehicles_dict = object_as_dict(vehicles)
         vehicles_dict['stores_list'] = []
         vehicles_dict['makers_list'] = []
-        vehicles_dict['model_list'] = []
+        vehicles_dict['models_list'] = []
 
         for stores in stores_list:
             if stores.storeId == vehicles.storeId:
@@ -74,10 +74,10 @@ def combine_vehicles_and_detail(vehicles_list, stores_list,
                 makers_dict = object_as_dict(makers)
                 vehicles_dict['makers_list'].append(makers_dict)
 
-        for models in model_list:
+        for models in models_list:
             if models.modelId == vehicles.vehicleModel:
                 model_dict = object_as_dict(models)
-                vehicles_dict['model_list'].append(model_dict)
+                vehicles_dict['models_list'].append(model_dict)
 
         combined_list.append(vehicles_dict)
 
@@ -230,7 +230,7 @@ def get_vehicle_by_params(query_params):
     vehicleModel = query_params.get("vehicleModel")
     vehicleSeat = query_params.get("vehicleSeat")
     makerId = query_params.get("makerId")
- 
+
     # Join the tables to fetch the required data
     query = session.query(VehiclesMaster, StoresMaster,
                           MakersMaster, ModelsMaster) \
@@ -257,16 +257,16 @@ def get_vehicle_by_params(query_params):
 
     if result:
         combined_list = []
-
-        for vehicle, store, model, maker in result:
+        for vehicle, store, maker, model in result:
             vehicles_dict = object_as_dict(vehicle)
             vehicles_dict['stores_list'] = [object_as_dict(store)]
-            vehicles_dict['models_list'] = [object_as_dict(model)]
             vehicles_dict['makers_list'] = [object_as_dict(maker)]
+            vehicles_dict['models_list'] = [object_as_dict(model)]
             combined_list.append(vehicles_dict)
-
+        # Paginate by pageNum & pageSize
+        paginated_lst = paginate(combined_list, query_params)
         return {
-            "vehicles_list": combined_list,
+            "vehicles_list": paginated_lst,
             "totalRecords": len(combined_list),
             "message": message_vehicles_constant.MESSAGE_SUCCESS_GET_LIST,
             "status": 200

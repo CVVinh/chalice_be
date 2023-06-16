@@ -132,19 +132,23 @@ class VehiclesMaster(Base):
     __tablename__ = 'm_vehicles'
 
     vehicleId = Column("vehicle_id", Integer, primary_key=True, comment="車両ID")
-    vehicleName = Column("vehicle_name", String(200), comment="名前車両")
+    vehicleName = Column("vehicle_name", String(200), comment="名前車両",
+                         nullable=False)
     makerId = Column("maker_id", Integer, ForeignKey("m_makers.maker_id"),
-                     comment="メーカーID")
+                     comment="メーカーID", nullable=False)
     storeId = Column("store_id", Integer, ForeignKey("m_stores.store_id"),
-                     comment="売上ID")
+                     comment="売上ID", nullable=False)
     year = Column("year", Integer, comment="製造年")
     mileage = Column("mileage", Integer, comment="車の走行距離(km)")
     vehicleStatus = Column("vehicle_status", Integer,
                            comment="車の状態：1-利用可能、2-レンタル済、3-保守中")
-    vehicleSeat = Column("vehicle_seat", Integer, comment="Số lượng ghế")
+    vehicleSeat = Column("vehicle_seat", Integer, comment="Số lượng ghế",
+                         nullable=False)
     vehicleModel = Column("vehicle_model", Integer,
-                          ForeignKey("m_models.model_id"), comment="Kiểu xe")
-    vehicleValue = Column("vehicle_value", Float, comment="Giá xe")
+                          ForeignKey("m_models.model_id"), comment="Kiểu xe",
+                          nullable=False)
+    vehicleValue = Column("vehicle_value", Float, comment="Giá xe",
+                          nullable=False)
     vehicleEngine = Column("vehicleEngine", String(200), comment="Động cơ xe")
     vehicleRating = Column("vehicleRating", String(5), comment="Xếp hạng")
     vehicleConsumedEnergy = Column("vehicleConsumedEnergy", String(100),
@@ -237,8 +241,9 @@ class RentalOrderDetail(Base):
                            nullable=False, comment="車両ID")
     vehicleId = Column("vehicle_id", ForeignKey("m_vehicles.vehicle_id"),
                        nullable=False, comment="車両ID")
-    optionId = Column("option_id", ForeignKey("m_options.option_id"),
-                      nullable=False, comment="車両ID")
+    optionId = Column("option_id", String(200), nullable=False, comment="車両ID")
+    insuranceId = Column("insurance_id", String(200), nullable=False,
+                         comment="ID bao hiem")
     quantity = Column("quantity", Integer, comment="数量", nullable=False)
     amount = Column("amount", Float, comment="小計", nullable=False)
     rentalStartDate = Column("rental_start_date", DateTime, nullable=False,
@@ -275,11 +280,12 @@ class RentalOrderCart(Base):
                       comment="車両ID")
     insuranceId = Column("insurance_id", ForeignKey(
         "m_insurances.insurance_id"), comment="保険ID")
-    statusCart = Column("status_cart", Integer, nullable=False, server_default=text("0"),
+    statusCart = Column("status_cart", Integer, nullable=False,
+                        server_default=text("0"),
                         comment="0: giỏ hàng; 1: đã đặt")
-    rentalStartDate = Column("rental_start_date", DateTime,
+    rentalStartDate = Column("rental_start_date", DateTime, nullable=False,
                              comment="レンタル開始日")
-    rentalEndDate = Column("rental_end_date", DateTime,
+    rentalEndDate = Column("rental_end_date", DateTime, nullable=False,
                            comment="レンタル終了日")
     createdAt = Column("created_at", DateTime, nullable=False,
                        server_default=func.now(), comment="作成日時:プログラムでは設定しない")

@@ -22,7 +22,6 @@ validation_create_rental_order_schema = {
             "totalAmount": {"type": "number"},
             "paymentMethodId": {"type": "integer"},
             "rentalStatus": {"type": "integer"},
-            "paymentedAt": {"type": "string", "format": "date"},
             "details": {
                 "type": "array",
                 "items": {

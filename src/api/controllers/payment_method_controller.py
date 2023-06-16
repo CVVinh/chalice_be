@@ -15,6 +15,8 @@ payment_method_bp = Blueprint(__name__)
 @transaction()
 def add_payment_method_controller():
     request = payment_method_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     payment_method_schema.validate_post_payment_method_list(request)
     success, result = payment_method_service.add_payment_method(request)
     if success:
@@ -27,6 +29,8 @@ def add_payment_method_controller():
 @transaction()
 def add_multi_payment_method_controller():
     requests = payment_method_bp.current_request.json_body
+    if requests is not None and 'params' in requests:
+        requests = requests['params']
     for item in requests:
         payment_method_schema.validate_post_payment_method_list(item)
     success, result = payment_method_service.add_multi_payment_method(requests)
@@ -40,6 +44,8 @@ def add_multi_payment_method_controller():
 @transaction()
 def update_payment_method_controller():
     request = payment_method_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     payment_method_schema.validate_put_payment_method_list(request)
     success, result = payment_method_service.update_payment_method_info(
         request)
@@ -53,6 +59,8 @@ def update_payment_method_controller():
 @transaction()
 def delete_payment_method_controller():
     request = payment_method_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = payment_method_service.delete_payment_method(request)
     if success:
         return success_response({"message": result, "status": 200})
@@ -64,6 +72,8 @@ def delete_payment_method_controller():
 @transaction()
 def delete_multi_payment_method_controller():
     request = payment_method_bp.current_request.json_body
+    if request is not None and 'params' in request:
+        request = request['params']
     _, result = payment_method_service.delete_multi_payment_method(request)
     return success_response({"message": result, "status": 200})
 
@@ -73,6 +83,8 @@ def delete_multi_payment_method_controller():
 @transaction()
 def get_payment_method_info_controller():
     request = payment_method_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = payment_method_service.get_payment_method_info(request)
     if success:
         return success_response(result)
@@ -84,6 +96,8 @@ def get_payment_method_info_controller():
 @transaction()
 def get_option_list_controller():
     request = payment_method_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = payment_method_service.get_payment_method_list(request)
     if success:
         return success_response(result)
@@ -95,6 +109,8 @@ def get_option_list_controller():
 @transaction()
 def export_payment_method_list_controller():
     request = payment_method_bp.current_request.query_params
+    if request is not None and 'params' in request:
+        request = request['params']
     success, result = payment_method_service.export_payment_method_list(
         request)
     file_name = f"payment_method_list{str(func.now())}"
