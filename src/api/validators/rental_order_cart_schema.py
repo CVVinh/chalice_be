@@ -7,13 +7,25 @@ from api.utils.utils import check_param_error
 
 
 def validation_create_rental_order_cart(json_body):
+    """Validates that the creation of a reserved rent order cart is valid .
+
+    Args:
+        json_body ([type]): [description]
+
+    Raises:
+        ApplicationException: [description]
+    """
     try:
         jsonschema.validate(
             json_body, validation_create_rental_order_cart_schema)
     except Exception as e:
         LOGGER.debug(e)
-        raise ApplicationException(message=Message.E000002.format(
-            check_param_error(e, validation_create_rental_order_cart_schema)))
+        raise ApplicationException(
+            message=Message.E000002.format(
+                check_param_error(
+                    e, validation_create_rental_order_cart_schema)
+            )
+        )
 
 
 validation_create_rental_order_cart_schema = {
@@ -31,7 +43,13 @@ validation_create_rental_order_cart_schema = {
         "modifiedBy": {"type": ["integer"]},
         "deletedBy": {"type": ["integer"]},
     },
-    "required": ["accountId", "vehicleId", "statusCart", "rentalStartDate", "rentalEndDate"],
+    "required": [
+        "accountId",
+        "vehicleId",
+        "statusCart",
+        "rentalStartDate",
+        "rentalEndDate",
+    ],
 }
 
 
@@ -41,8 +59,12 @@ def validation_update_rental_order_cart(json_body):
             json_body, validation_update_rental_order_cart_schema)
     except Exception as e:
         LOGGER.debug(e)
-        raise ApplicationException(message=Message.E000002.format(
-            check_param_error(e, validation_update_rental_order_cart_schema)))
+        raise ApplicationException(
+            message=Message.E000002.format(
+                check_param_error(
+                    e, validation_update_rental_order_cart_schema)
+            )
+        )
 
 
 validation_update_rental_order_cart_schema = {
@@ -61,5 +83,5 @@ validation_update_rental_order_cart_schema = {
         "modifiedBy": {"type": ["integer"]},
         "deletedBy": {"type": ["integer"]},
     },
-    "required": ["rentalOrdersCartId"]
+    "required": ["rentalOrdersCartId"],
 }

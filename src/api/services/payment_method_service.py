@@ -1,4 +1,3 @@
-from sqlalchemy.sql import func
 from api.models.models import PaymentMethodsMaster
 from api.models import session
 from api.utils.utils import add_update_object, object_as_dict, export, paginate
@@ -11,11 +10,11 @@ message_payment_method_constant.setName("Payment Methods Master")
 def add_payment_method(payment_method_obj):
     """
     Create request and add record for payment_method
-    
+
     Args:
         payment_method_obj: request body
     Returns:
-        The message   
+        The message
     """
     create_payment_method = PaymentMethodsMaster()
     session.add(add_update_object(payment_method_obj, create_payment_method))
@@ -26,11 +25,11 @@ def add_payment_method(payment_method_obj):
 def add_multi_payment_method(payment_method_obj):
     """
     Create request and add many record for payment_method
-    
+
     Args:
         payment_method_obj: request body
     Returns:
-        The message   
+        The message
     """
     for item in payment_method_obj:
         create_payment_method = PaymentMethodsMaster()
@@ -49,8 +48,10 @@ def update_payment_method_info(payment_method_obj):
         Response: Returning a message
     """
     payment_method_id = payment_method_obj.get("paymentMethodId")
-    if(
-        update_to_payment_method := session.query(PaymentMethodsMaster).filter(PaymentMethodsMaster.paymentMethodId == payment_method_id).first()
+    if (
+        update_to_payment_method := session.query(PaymentMethodsMaster)
+        .filter(PaymentMethodsMaster.paymentMethodId == payment_method_id)
+        .first()
     ):
         add_update_object(payment_method_obj, update_to_payment_method)
         session.commit()
@@ -68,8 +69,10 @@ def delete_payment_method(query_params):
         Response: Returning a message
     """
     payment_method_id = query_params.get("payment_method_id")
-    if(
-        update_to_payment_method := session.query(PaymentMethodsMaster).filter(PaymentMethodsMaster.paymentMethodId == payment_method_id).first()
+    if (
+        update_to_payment_method := session.query(PaymentMethodsMaster)
+        .filter(PaymentMethodsMaster.paymentMethodId == payment_method_id)
+        .first()
     ):
         session.delete(update_to_payment_method)
         session.commit()
@@ -87,8 +90,10 @@ def delete_multi_payment_method(query_params):
         Response: Returning a message
     """
     for item in query_params:
-        if(
-            update_to_payment_method := session.query(PaymentMethodsMaster).filter(PaymentMethodsMaster.paymentMethodId == item).first()
+        if (
+            update_to_payment_method := session.query(PaymentMethodsMaster)
+            .filter(PaymentMethodsMaster.paymentMethodId == item)
+            .first()
         ):
             session.delete(update_to_payment_method)
     session.commit()
@@ -102,16 +107,19 @@ def get_payment_method_info(query_params):
     Args:
         query_params: parameter search
     Returns:
-        Response: Returning a message and a object inclue obj the payment_method
+        Response: Returning a message and a object inclue obj
+                the payment_method
     """
     payment_method_id = query_params.get("payment_method_id")
-    if(
-       payment_method_info := session.query(PaymentMethodsMaster).filter(PaymentMethodsMaster.paymentMethodId == payment_method_id).first() 
+    if (
+        payment_method_info := session.query(PaymentMethodsMaster)
+        .filter(PaymentMethodsMaster.paymentMethodId == payment_method_id)
+        .first()
     ):
         tmp_payment_method_info = {
-            **object_as_dict(payment_method_info, True), 
+            **object_as_dict(payment_method_info, True),
             "message": message_payment_method_constant.MESSAGE_SUCCESS_GET_INFO,
-            "status": 200
+            "status": 200,
         }
         return (True, tmp_payment_method_info)
     return (False, message_payment_method_constant.MESSAGE_ERROR_NOT_EXIST)
@@ -124,14 +132,19 @@ def get_payment_method_list(query_params):
     Args:
         query_params: param search
     Returns:
-        Response: Returning a message, total record, lists 
+        Response: Returning a message, total record, lists
     """
     filter_param_get_list = filter_param_get_list_payment_method(query_params)
     paginated_lst = paginate(filter_param_get_list, query_params)
-    return (True, {"mstPaymentMethods": paginated_lst,
-                   "total": len(paginated_lst),
-                   "message": message_payment_method_constant.MESSAGE_SUCCESS_GET_LIST,
-                   "status": 200})
+    return (
+        True,
+        {
+            "mstPaymentMethods": paginated_lst,
+            "total": len(paginated_lst),
+            "message": message_payment_method_constant.MESSAGE_SUCCESS_GET_LIST,
+            "status": 200,
+        },
+    )
 
 
 def export_payment_method_list(query_params):
@@ -150,11 +163,19 @@ def filter_param_get_list_payment_method(query_params):
     query_list_payment_method = session.query(PaymentMethodsMaster)
     if query_params:
         if "payment_method_id" in query_params:
-            query_list_payment_method = query_list_payment_method.filter(PaymentMethodsMaster.paymentMethodId == query_params["payment_method_id"])
+            query_list_payment_method = query_list_payment_method.filter(
+                PaymentMethodsMaster.paymentMethodId
+                == query_params["payment_method_id"]
+            )
 
         if "payment_method_name" in query_params:
-            query_list_payment_method = query_list_payment_method.filter(PaymentMethodsMaster.paymentMethodName.like(f"%{query_params['payment_method_name']}%"))
+            query_list_payment_method = query_list_payment_method.filter(
+                PaymentMethodsMaster.paymentMethodName.like(
+                    f"%{query_params['payment_method_name']}%"
+                )
+            )
 
-    return [object_as_dict(payment_method) for payment_method in query_list_payment_method.all()]
-
-
+    return [
+        object_as_dict(payment_method)
+        for payment_method in query_list_payment_method.all()
+    ]
