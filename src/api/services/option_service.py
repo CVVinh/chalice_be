@@ -1,3 +1,4 @@
+# from sqlalchemy.sql import func
 from api.models.models import OptionsMaster
 from api.models import session
 from api.utils.utils import add_update_object, object_as_dict, export, paginate
@@ -116,7 +117,8 @@ def get_option_info(query_params):
         .first()
     ):
         tmp_option_info = {
-            **object_as_dict(option_info, True),
+            "mstOptions": [{**object_as_dict(option_info, True)}],
+            "total": 1,
             "message": message_option_constant.MESSAGE_SUCCESS_GET_INFO,
             "status": 200,
         }

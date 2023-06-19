@@ -1,10 +1,11 @@
+# from sqlalchemy.sql import func
 from api.models.models import PaymentMethodsMaster
 from api.models import session
 from api.utils.utils import add_update_object, object_as_dict, export, paginate
 from api.messages import MessageResponse
 
-message_payment_method_constant = MessageResponse()
-message_payment_method_constant.setName("Payment Methods Master")
+mesg_const = MessageResponse()
+mesg_const.setName("Payment Methods Master")
 
 
 def add_payment_method(payment_method_obj):
@@ -19,7 +20,7 @@ def add_payment_method(payment_method_obj):
     create_payment_method = PaymentMethodsMaster()
     session.add(add_update_object(payment_method_obj, create_payment_method))
     session.commit()
-    return (True, message_payment_method_constant.MESSAGE_SUCCESS_CREATED)
+    return (True, mesg_const.MESSAGE_SUCCESS_CREATED)
 
 
 def add_multi_payment_method(payment_method_obj):
@@ -35,7 +36,7 @@ def add_multi_payment_method(payment_method_obj):
         create_payment_method = PaymentMethodsMaster()
         session.add(add_update_object(item, create_payment_method))
     session.commit()
-    return (True, message_payment_method_constant.MESSAGE_SUCCESS_CREATED)
+    return (True, mesg_const.MESSAGE_SUCCESS_CREATED)
 
 
 def update_payment_method_info(payment_method_obj):
@@ -55,8 +56,8 @@ def update_payment_method_info(payment_method_obj):
     ):
         add_update_object(payment_method_obj, update_to_payment_method)
         session.commit()
-        return (True, message_payment_method_constant.MESSAGE_SUCCESS_UPDATED)
-    return (False, message_payment_method_constant.MESSAGE_ERROR_NOT_EXIST)
+        return (True, mesg_const.MESSAGE_SUCCESS_UPDATED)
+    return (False, mesg_const.MESSAGE_ERROR_NOT_EXIST)
 
 
 def delete_payment_method(query_params):
@@ -76,8 +77,8 @@ def delete_payment_method(query_params):
     ):
         session.delete(update_to_payment_method)
         session.commit()
-        return (True, message_payment_method_constant.MESSAGE_SUCCESS_DELETED)
-    return (False, message_payment_method_constant.MESSAGE_ERROR_NOT_EXIST)
+        return (True, mesg_const.MESSAGE_SUCCESS_DELETED)
+    return (False, mesg_const.MESSAGE_ERROR_NOT_EXIST)
 
 
 def delete_multi_payment_method(query_params):
@@ -97,7 +98,7 @@ def delete_multi_payment_method(query_params):
         ):
             session.delete(update_to_payment_method)
     session.commit()
-    return (True, message_payment_method_constant.MESSAGE_SUCCESS_DELETED)
+    return (True, mesg_const.MESSAGE_SUCCESS_DELETED)
 
 
 def get_payment_method_info(query_params):
@@ -108,21 +109,22 @@ def get_payment_method_info(query_params):
         query_params: parameter search
     Returns:
         Response: Returning a message and a object inclue obj
-                the payment_method
+        the payment_method
     """
     payment_method_id = query_params.get("payment_method_id")
     if (
-        payment_method_info := session.query(PaymentMethodsMaster)
+        pay_method_info := session.query(PaymentMethodsMaster)
         .filter(PaymentMethodsMaster.paymentMethodId == payment_method_id)
         .first()
     ):
         tmp_payment_method_info = {
-            **object_as_dict(payment_method_info, True),
-            "message": message_payment_method_constant.MESSAGE_SUCCESS_GET_INFO,
+            "mstPaymentMethods": [{**object_as_dict(pay_method_info, True)}],
+            "total": 1,
+            "message": mesg_const.MESSAGE_SUCCESS_GET_INFO,
             "status": 200,
         }
         return (True, tmp_payment_method_info)
-    return (False, message_payment_method_constant.MESSAGE_ERROR_NOT_EXIST)
+    return (False, mesg_const.MESSAGE_ERROR_NOT_EXIST)
 
 
 def get_payment_method_list(query_params):
@@ -141,7 +143,7 @@ def get_payment_method_list(query_params):
         {
             "mstPaymentMethods": paginated_lst,
             "total": len(paginated_lst),
-            "message": message_payment_method_constant.MESSAGE_SUCCESS_GET_LIST,
+            "message": mesg_const.MESSAGE_SUCCESS_GET_LIST,
             "status": 200,
         },
     )

@@ -253,7 +253,8 @@ class VehiclesMaster(Base):
     vehicleEngine = Column("vehicleEngine", String(200), comment="Động cơ xe")
     vehicleRating = Column("vehicleRating", String(5), comment="Xếp hạng")
     vehicleConsumedEnergy = Column(
-        "vehicleConsumedEnergy", String(100),
+        "vehicleConsumedEnergy",
+        String(100),
         comment="Năng lượng tiêu hao trên 100km"
     )
     vehicleDescribe = Column("vehicle_describe", String(200), comment="Mô tả")
@@ -318,11 +319,12 @@ class RentalOrders(Base):
         comment="お支払い方法ID",
     )
     rentalStatus = Column(
-        "rental_status", Integer,
+        "rental_status",
+        Integer,
         comment="注文の状態。1:新規、2:確認中、3:確認済、4:支払い済み、5:キャンセル"
     )
     paymentedAt = Column("paymented_at", DateTime,
-                         nullable=False, comment="支払日")
+                         nullable=True, comment="支払日")
     createdAt = Column(
         "created_at",
         DateTime,
@@ -358,7 +360,10 @@ class RentalOrderDetail(Base):
     __tablename__ = "t_rental_order_detail"
 
     rentalOrdersId = Column(
-        "rental_orders_detail_id", Integer, primary_key=True, comment="発注明細ID:自動採番"
+        "rental_orders_detail_id",
+        Integer,
+        primary_key=True,
+        comment="発注明細ID:自動採番"
     )
     rentalOrderId = Column(
         "rental_order_id",
