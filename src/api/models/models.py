@@ -212,7 +212,7 @@ class RentalOrders(Base):
                              comment="お支払い方法ID")
     rentalStatus = Column("rental_status", Integer,
                           comment="注文の状態。1:新規、2:確認中、3:確認済、4:支払い済み、5:キャンセル")
-    paymentedAt = Column("paymented_at", DateTime, nullable=False,
+    paymentedAt = Column("paymented_at", DateTime, nullable=True,
                          comment="支払日")
     createdAt = Column("created_at", DateTime, nullable=False,
                        server_default=func.now(), comment="作成日時:プログラムでは設定しない")

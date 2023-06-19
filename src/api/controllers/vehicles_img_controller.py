@@ -14,11 +14,10 @@ vehicles_img_bp = Blueprint(__name__)
 @transaction()
 def vehicles_img_list_controller():
     request = vehicles_img_bp.current_request.query_params
-    success, result = vehicles_img_service.get_vehicles_img_list(request)
-    if success:
-        return success_response({'message': result, 'status': 200})
-    return error_response({'message': str(result), 'status': 400}, 400)
-
+    try:
+        return vehicles_img_service.get_vehicles_img_list(request)
+    except Exception as e:
+        return error_response({"message": str(e)}, 400)
 # Add an order history
 
 

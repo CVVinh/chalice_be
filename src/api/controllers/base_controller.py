@@ -6,7 +6,7 @@ from api.services import base_service
 from api.validators import base_schema
 from api.utils.status_response import success_response, error_response
 from sqlalchemy.sql import func
-from chalice import Response
+from chalice.app import Response
 
 base_bp = Blueprint(__name__)
 
@@ -90,6 +90,8 @@ def export_base_list_controller():
 @transaction()
 def account_list_controller():
     request = base_bp.current_request.query_params
+    if request is not None and "params" in request:
+        request = request["params"]
     success, result = base_service.get_base_user_info(request)
     if success:
         return success_response(result)

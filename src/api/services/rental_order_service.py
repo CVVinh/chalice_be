@@ -1,4 +1,4 @@
-from api.models.models import RentalOrders, RentalOrderDetail
+from api.models.models import RentalOrders, RentalOrderDetail, RentalOrderCart
 from api.models import session
 from api.utils.utils import paginate
 from api.messages import MessageResponse
@@ -23,37 +23,52 @@ def create_rental_order(rental_order_data):
     """
     # Extract details from rental_order_data
     details = rental_order_data.pop("details", [])
+    # Extract details from rental_order_data
+    cartsOrderId = rental_order_data.pop("cartOrders", [])
 
     # Create a new rental order
     new_rental_order = RentalOrders(**rental_order_data)
     session.add(new_rental_order)
     session.flush()  # Get the auto-generated rental order ID
-
-    total_amount = 0
+    orderId = new_rental_order.rentalOrdersId
 
     # Create rental order details
     for detail in details:
-        # Get the amount from the detail dictionary
-        amount = detail.get('amount', 0)
-        total_amount += amount
-
-        # Remove the 'amount' attribute from the detail dictionary
-        detail.pop('amount', None)
-
         # Create a new rental order detail
         new_rental_order_detail = RentalOrderDetail(
             rentalOrderId=new_rental_order.rentalOrdersId,
-            amount=amount,
             **detail
         )
         session.add(new_rental_order_detail)
 
-    # Update the total amount of the rental order
-    new_rental_order.totalAmount = total_amount
-
     session.commit()
 
-    return (True, message_rental_order_constants.MESSAGE_SUCCESS_CREATED)
+    # Call remove_items_from_cart to update the state of cart items
+    remove_items_from_cart(cartsOrderId)
+
+    return (True, {
+        "message": message_rental_order_constants.MESSAGE_SUCCESS_CREATED,
+        "data": {
+            orderId: orderId,
+        }})
+
+
+def remove_items_from_cart(cart_order_ids):
+    """
+    Update the state of cart items based on the provided list of cart order
+    IDs.
+
+    Arguments:
+        cart_order_ids: List of cart order IDs to update.
+    Returns:
+        The message.
+    """
+    session.query(RentalOrderCart).filter(RentalOrderCart.rentalOrdersCartId.
+                                          in_(cart_order_ids)).update(
+        {RentalOrderCart.isDeleted: True, RentalOrderCart.statusCart: 1},
+        synchronize_session=False
+    )
+    session.commit()
 
 
 def get_all_rental_order(request):

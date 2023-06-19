@@ -19,7 +19,7 @@ validation_create_rental_order_schema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-            "totalAmount": {"type": "number"},
+            "totalAmount": {"type": "integer"},
             "paymentMethodId": {"type": "integer"},
             "rentalStatus": {"type": "integer"},
             "details": {
@@ -28,13 +28,16 @@ validation_create_rental_order_schema = {
                     "type": "object",
                     "properties": {
                         "vehicleId": {"type": "integer"},
-                        "optionId": {"type": "integer"},
+                        "optionId": {"type": "string"},
+                        "insuranceId": {"type": "string"},
                         "quantity": {"type": "integer"},
                         "amount": {"type": "number"},
-                        "rentalStartDate": {"type": "string", "format": "date"},
+                        "rentalStartDate": {"type": "string",
+                                            "format": "date"},
                         "rentalEndDate": {"type": "string", "format": "date"}
                     },
-                    "required": ["vehicleId", "optionId", "quantity", "amount", "rentalStartDate", "rentalEndDate"]
+                    "required": ["vehicleId", "optionId", "quantity", "amount",
+                                 "rentalStartDate", "rentalEndDate"]
                 }
             }
     },
@@ -76,11 +79,13 @@ update_rental_order_detail_schema = {
     "type": "object",
     "properties": {
         "vehicleId": {"type": "integer"},
-        "optionId": {"type": "integer"},
+        "optionId": {"type": "string"},
+        "insuranceId": {"type": "string"},
         "quantity": {"type": "integer"},
         "amount": {"type": "number"},
         "rentalStartDate": {"type": "string", "format": "date"},
         "rentalEndDate": {"type": "string", "format": "date"}
     },
-    "required": ["vehicleId", "optionId", "quantity", "amount", "rentalStartDate", "rentalEndDate"]
+    "required": ["vehicleId", "optionId", "insuranceId", "quantity", "amount",
+                 "rentalStartDate", "rentalEndDate"]
 }

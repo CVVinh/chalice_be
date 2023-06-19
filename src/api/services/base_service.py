@@ -30,7 +30,7 @@ def add_base(base_obj):
         "telephoneNumber": base_obj.get("telephoneNumber"),
         "faxNumber": base_obj.get("faxNumber"),
         "eMailAddress": base_obj.get("eMailAddress"),
-        "note": base_obj.get("note")
+        "note": base_obj.get("note"),
     }
     # Get the creation time
     create_at = func.now()
@@ -39,14 +39,15 @@ def add_base(base_obj):
     session.add(add_update_object(base_data, create_base))
 
     # Find the newly created base
-    new_base_id = session.query(BaseMaster) \
-                         .filter(BaseMaster.createdAt == create_at) \
-                         .first()
+    new_base_id = (
+        session.query(BaseMaster).filter(
+            BaseMaster.createdAt == create_at).first()
+    )
 
     # Save the accountId and baseId of the base just created
     account_base_data = {
         "accountId": base_obj.get("accountId"),
-        "baseId": new_base_id.baseId
+        "baseId": new_base_id.baseId,
     }
 
     # Create new account base
@@ -69,11 +70,13 @@ def update_base_info(base_obj):
     base_id = base_obj.get("baseId")
 
     # Search base with baseId
-    update_to_base = session.query(BaseMaster) \
-        .filter(BaseMaster.baseId == base_id, BaseMaster.isDeleted == 0) \
+    update_to_base = (
+        session.query(BaseMaster)
+        .filter(BaseMaster.baseId == base_id, BaseMaster.isDeleted == 0)
         .first()
+    )
     # If base exists then update that base and return message
-    if (update_to_base):
+    if update_to_base:
         # Update base
         add_update_object(base_obj, update_to_base)
         update_to_base.modifiedAt = func.now()
@@ -95,20 +98,24 @@ def delete_base(query_params):
     base_id = query_params.get("baseId")
 
     # Search base with baseId
-    delete_to_base = session.query(BaseMaster) \
-        .filter(BaseMaster.baseId == base_id, BaseMaster.isDeleted == 0) \
+    delete_to_base = (
+        session.query(BaseMaster)
+        .filter(BaseMaster.baseId == base_id, BaseMaster.isDeleted == 0)
         .first()
+    )
 
     # If base id exists then delete that base id and return message
-    if (delete_to_base):
+    if delete_to_base:
         # Delete base
         delete_to_base.isDeleted = True
         delete_to_base.deletedAt = func.now()
 
         # Search all account base whose baseId matches the baseId just deleted
-        delete_to_account_base = session.query(AccountBaseMaster) \
-            .filter(AccountBaseMaster.baseId == delete_to_base.baseId) \
+        delete_to_account_base = (
+            session.query(AccountBaseMaster)
+            .filter(AccountBaseMaster.baseId == delete_to_base.baseId)
             .all()
+        )
 
         # Delete all found account base
         for base in delete_to_account_base:
@@ -132,16 +139,15 @@ def get_base_info(query_params):
     base_id = query_params.get("baseId")
 
     # Search base with base_id
-    base_info = session.query(BaseMaster) \
-        .filter(BaseMaster.baseId == base_id) \
-        .first()
+    base_info = session.query(BaseMaster).filter(
+        BaseMaster.baseId == base_id).first()
 
     # if base id exists then get that base id info and return message
-    if (base_info):
+    if base_info:
         tmp_base_info = {
             **object_as_dict(base_info, True),
             "message": message_base_constant.MESSAGE_SUCCESS_GET_INFO,
-            "status": 200
+            "status": 200,
         }
         return (True, tmp_base_info)
     return (False, message_base_constant.MESSAGE_ERROR_NOT_EXIST)
@@ -159,10 +165,15 @@ def get_base_list(query_params):
     # Paginate by pageNum & pageSize
     filter_param_get_list = filter_param_get_list_base(query_params)
     paginated_lst = paginate(filter_param_get_list, query_params)
-    return (True, {"mstBase": paginated_lst,
-                   "total": len(filter_param_get_list),
-                   "message": message_base_constant.MESSAGE_SUCCESS_GET_LIST,
-                   "status": 200})
+    return (
+        True,
+        {
+            "mstBase": paginated_lst,
+            "total": len(filter_param_get_list),
+            "message": message_base_constant.MESSAGE_SUCCESS_GET_LIST,
+            "status": 200,
+        },
+    )
 
 
 def export_base_list(query_params):
@@ -218,21 +229,36 @@ def get_base_user_info(query_params):
 
     # Query Column needs to get, join tables containing information to get
     account_id = query_params.get("accountId")
-    query_list_account = session.query(AccountMaster.accountId,
-                                       BaseMaster.baseId, BaseMaster.baseName,
-                                       BaseMaster.prefCode, BaseMaster.address,
-                                       BaseMaster.addressee,
-                                       BaseMaster.eMailAddress,
-                                       BaseMaster.telephoneNumber,
-                                       BaseMaster.faxNumber) \
-        .join(AccountBaseMaster,
-              AccountMaster.accountId == AccountBaseMaster.accountId,
-              isouter=True) \
-        .join(BaseMaster,
-              AccountBaseMaster.baseId == BaseMaster.baseId, isouter=True) \
-        .filter(AccountMaster.accountId == account_id).distinct()
+    query_list_account = (
+        session.query(
+            AccountMaster.accountId,
+            BaseMaster.baseId,
+            BaseMaster.baseName,
+            BaseMaster.prefCode,
+            BaseMaster.address,
+            BaseMaster.addressee,
+            BaseMaster.eMailAddress,
+            BaseMaster.telephoneNumber,
+            BaseMaster.faxNumber,
+        )
+        .join(
+            AccountBaseMaster,
+            AccountMaster.accountId == AccountBaseMaster.accountId,
+            isouter=True,
+        )
+        .join(BaseMaster, AccountBaseMaster.baseId == BaseMaster.baseId,
+              isouter=True)
+        .filter(AccountMaster.accountId == account_id)
+        .distinct()
+    )
 
-    result_list = [{**account} for account in query_list_account.all()]
-    return (True, {"mstBaseUser": result_list,
-                   "message": message_base_constant.MESSAGE_SUCCESS_GET_LIST,
-                   "status": 200})
+    result_list = [{**account}  # type: ignore
+                   for account in query_list_account.all()]
+    return (
+        True,
+        {
+            "mstBaseUser": result_list,
+            "message": message_base_constant.MESSAGE_SUCCESS_GET_LIST,
+            "status": 200,
+        },
+    )

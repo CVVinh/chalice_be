@@ -5,7 +5,7 @@ from api.models.transaction import transaction
 from api.services import option_service
 from api.validators import option_schema
 from api.utils.status_response import success_response, error_response
-from chalice import Response
+from chalice.app import Response
 
 option_bp = Blueprint(__name__)
 
@@ -90,11 +90,11 @@ def get_option_info_controller():
     return error_response({"message": str(result), "status": 400}, 400)
 
 
-@option_bp.route('/func/get-option-list', methods=['GET'])
+@option_bp.route('/func/get-option-list', methods=['POST'])
 @errors_handle
 @transaction()
 def get_option_list_controller():
-    request = option_bp.current_request.query_params
+    request = option_bp.current_request.json_body
     if request is not None and 'params' in request:
         request = request['params']
     success, result = option_service.get_option_list(request)
@@ -103,11 +103,11 @@ def get_option_list_controller():
     return error_response({"message": str(result), "status": 400}, 400)
 
 
-@option_bp.route('/func/export-option-list', methods=['GET'])
+@option_bp.route('/func/export-option-list', methods=['POST'])
 @errors_handle
 @transaction()
 def export_option_list_controller():
-    request = option_bp.current_request.query_params
+    request = option_bp.current_request.json_body
     if request is not None and 'params' in request:
         request = request['params']
     success, result = option_service.export_option_list(request)
@@ -116,7 +116,7 @@ def export_option_list_controller():
         return Response(
             result,
             headers={
-                "Content-disposition": f"attachment; filename={file_name}".csv
+                "Content-disposition": f"attachment; filename={file_name}.csv"
             },
         )
     return error_response({"message": str(result), "status": 400}, 400)

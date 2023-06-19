@@ -19,18 +19,24 @@ def get_vehicles_img_list(query_params):
     # Get data of list in DB
     try:
         result_list = session.query(VehicleImage).all()
-        vehicle_img_list = [object_as_dict(img)for img in result_list]
-
+        # vehicle_img_list = [object_as_dict(img)for img in result_list]
+        vehicle_img_list = []
+        for img in result_list:
+            img_dict = object_as_dict(img)
+            # Thêm đường dẫn đến hình ảnh local
+            img_dict['image_path'] = f'images/{img.image}'
+            vehicle_img_list.append(img_dict)
         # Paginate by pageNum & pageSize
         paginated_lst = paginate(vehicle_img_list, query_params)
-        return True, {
+        return {
             "vehicle_img_list": paginated_lst,
             "totalRecords": len(vehicle_img_list),
             "message": message_vehicle_img_constant.MESSAGE_SUCCESS_GET_LIST,
-            "status": 200
+            "status": 200,
+            "image_base_path": "http://localhost:3000"
         }
     except Exception as e:
-        return False, {
+        return {
             "message": str(e),
             "status": 500
         }
