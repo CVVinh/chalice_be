@@ -1,5 +1,5 @@
 from chalice.app import Blueprint
-
+from urllib.parse import parse_qs
 from api.exceptions.exception_handler import errors_handle
 from api.models.transaction import transaction
 from api.services import makers_service
@@ -25,7 +25,10 @@ def makers_list_controller():
 @errors_handle
 @transaction()
 def add_makers():
-    request = makers_bp.current_request.json_body
+    # request = makers_bp.current_request._raw_body
+    # request = parse_qs(makers_bp.current_request.raw_body.decode())
+    request = makers_bp.current_request.to_dict()
+    print("truyen", request)
     makers_schema.validate_post_makers_list(request)
     success, result = makers_service.create_makers(
         request)

@@ -53,6 +53,8 @@ def create_vehicles_img(query_params):
     """
     vehicle_img_id = query_params.get("vehicleImageid")
     image = query_params.get("image")
+    imagePath = query_params.get("imagePath")
+
     # Kiểm tra xem vehicle_img đã tồn tại trong cơ sở dữ liệu chưa
     existing_vehicle_img = session.query(VehicleImage).filter(
         VehicleImage.vehicleImageid == vehicle_img_id
@@ -66,7 +68,7 @@ def create_vehicles_img(query_params):
     #     file.write(file_content)
     # Thêm thông tin hình ảnh vào cơ sở dữ liệu
     new_vehicle_img = VehicleImage(vehicleImageid=vehicle_img_id,
-                                   image=f'{image}')
+                                   image=f'{image}', imagePath=f'{imagePath}')
     session.add(new_vehicle_img)
     # session.add(add_update_object(query_params, img))
     session.commit()

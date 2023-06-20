@@ -1,4 +1,13 @@
-from sqlalchemy import Column, Numeric, String, Text, Integer, DateTime, Boolean, Float
+from sqlalchemy import (
+    Column,
+    String,
+    Text,
+    Integer,
+    DateTime,
+    Boolean,
+    Float,
+    BLOB,
+)
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -162,8 +171,8 @@ class VehicleImage(Base):
 
     vehicleImageid = Column(Integer, primary_key=True)
     vehicleId = Column(Integer, ForeignKey('m_vehicles.vehicle_id'))
-    image = Column(String(255))
-
+    image = Column(BLOB)
+    imagePath = Column(String(255))
     vehicle = relationship('VehiclesMaster', back_populates='images')
 
 
@@ -267,26 +276,32 @@ class RentalOrderDetail(Base):
 
 
 class RentalOrderCart(Base):
-    __tablename__ = 't_rental_order_cart'
+    __tablename__ = 't_car_cart'
 
-    rentalOrdersCartId = Column("rental_orders_cart_id", Integer,
-                                primary_key=True,
-                                comment="発注明細ID:自動採番")
+    carCartId = Column("car_cart_id", Integer, primary_key=True,
+                       comment="発注明細ID:自動採番")
     accountId = Column("account_id", ForeignKey(
         "m_accounts.account_id"), comment='アカウントID')
     vehicleId = Column("vehicle_id", ForeignKey("m_vehicles.vehicle_id"),
                        nullable=False, comment="車両ID")
-    optionId = Column("option_id", ForeignKey("m_options.option_id"),
+    optionId = Column("option_id", String(200),
                       comment="車両ID")
-    insuranceId = Column("insurance_id", ForeignKey(
-        "m_insurances.insurance_id"), comment="保険ID")
-    statusCart = Column("status_cart", Integer, nullable=False,
-                        server_default=text("0"),
-                        comment="0: giỏ hàng; 1: đã đặt")
+    insuranceId = Column("insurance_id", String(200), comment="保険ID")
     rentalStartDate = Column("rental_start_date", DateTime, nullable=False,
                              comment="レンタル開始日")
     rentalEndDate = Column("rental_end_date", DateTime, nullable=False,
                            comment="レンタル終了日")
+    totalHour = Column("total_hour", Float, nullable=False, comment="Tổng giờ")
+    totalHourCar = Column("total_hour_car", Float,
+                          nullable=False, comment="Chi phí xe theo giờ")
+    totalOption = Column("total_option", Float, comment="Tổng chi phí option")
+    totalInsurance = Column("total_insurance", Float,
+                            comment="Tổng chi phí bảo hiểm")
+    totalCost = Column("total_cost", Float,
+                       nullable=False, comment="Tổng chi phí")
+    statusCart = Column("status_cart", Integer, nullable=False,
+                        server_default=text("0"),
+                        comment="0: giỏ hàng; 1: đã đặt")
     createdAt = Column("created_at", DateTime, nullable=False,
                        server_default=func.now(), comment="作成日時:プログラムでは設定しない")
     createdBy = Column("created_by", ForeignKey("m_accounts.account_id"),
