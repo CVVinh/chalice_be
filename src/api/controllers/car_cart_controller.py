@@ -120,7 +120,7 @@ def export_car_cart_list_controller():
     return error_response({"message": str(result), "status": 400}, 400)
 
 
-@car_cart_bp.route("/func/get-list-car-cart", methods=["GET"])
+@car_cart_bp.route("/func/get-list-car-cart", methods=["POST"])
 @errors_handle
 @transaction()
 def get_list_car_cart_controller():

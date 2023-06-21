@@ -63,7 +63,7 @@ def remove_items_from_cart(cart_order_ids):
     Returns:
         The message.
     """
-    session.query(RentalOrderCart).filter(RentalOrderCart.rentalOrdersCartId.
+    session.query(RentalOrderCart).filter(RentalOrderCart.carCartId.
                                           in_(cart_order_ids)).update(
         {RentalOrderCart.isDeleted: True, RentalOrderCart.statusCart: 1},
         synchronize_session=False

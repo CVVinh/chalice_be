@@ -284,24 +284,27 @@ def handlerInclueData(list_data):
 
 def get_list_car_cart(query_params):
     """
-    Get all account list.
+    Get all car cart list or get list in parameters.
 
     Argument:
         query_params: parameter
     Returns:
         The message and a list of accounts.
     """
+    # create parameters
     parameters = [
         "carCartId",
         "accountId",
         "vehicleId",
-        "optionId",
-        "insuranceId",
         "statusCart",
     ]
+
+    # Get all car cart list
     query_list = session.query(RentalOrderCart).filter(
         RentalOrderCart.isDeleted == 0)
 
+    # if query_params exists then find each query_params in parameter
+    # get list of car_cars by query_param
     if query_params:
         for param in parameters:
             if param in query_params:
@@ -309,12 +312,14 @@ def get_list_car_cart(query_params):
                     getattr(RentalOrderCart, param) == query_params[param]
                 )
 
+    # if query_list is empty then return message
     if query_list.first is None:
         return (True, {
             "carCartList": None,
             "message": mesg_const.MESSAGE_ERROR_NOT_EXIST,
             "status": 404
         })
+    # otherwise call get_car_cart to get the list of carCartList
     else:
         result_list = get_car_cart(query_list)
         return (True, {
@@ -324,14 +329,36 @@ def get_list_car_cart(query_params):
         })
 
 
-def datetime_cv(o):
-    if isinstance(o, datetime):
-        return o.isoformat()
+def datetime_cv(time):
+    """
+    Convert a datetime object.
+
+    Argument:
+        time: object
+    Returns:
+        String representing time.
+    """
+    if isinstance(time, datetime):
+        return time.isoformat()
 
 
 def get_car_cart(car_card_obj):
+    """
+    Get all information in car_card_obj.
+
+    Argument:
+        Car_card_obj: array object
+    Returns:
+        An array containing information of car_cart.
+    """
+
+    # Create empty array
     result_list = []
+
+    # Iterate each object in the array to get information
     for car_cart in car_card_obj.all():
+
+        # Save information in car_cart to object list
         list = {
             "carCartId": car_cart.carCartId,
             "accountId": car_cart.accountId,
@@ -354,15 +381,33 @@ def get_car_cart(car_card_obj):
             "deletedBy": car_cart.deletedBy,
             "isDeleted": car_cart.isDeleted
         }
+
+        # Create an empty options array to store option_data  objects
         options = []
+
+        # Create an empty insurances array to store insurance_data  objects
         insurances = []
+
+        # Get optionId string in car_cart save to option_id variable
         option_id = car_cart.optionId
+
+        # Get insuranceId string in car_cart save to insurance_id variable
         insurance_id = car_cart.insuranceId
+
+        # Get id vehicle
         vehicle_id = car_cart.vehicleId
+
+        # If option_id is not null, trim string, find and get info
         if option_id is not None:
+            # Cut the string to get the id and convert the id to an int
             option_ids = [int(id) for id in option_id.split(",")]
+
+            # Iterate each id in the option_ids array
             for id in option_ids:
+                # Get OptionsMaster info from id
                 option = session.query(OptionsMaster).get(int(id))
+
+                # If the option exists, get the necessary information
                 if option:
                     option_data = {
                         "optionId": option.optionId,
@@ -370,10 +415,18 @@ def get_car_cart(car_card_obj):
                         "optionValue": option.optionValue,
                     }
                     options.append(option_data)
+
+        # If insurance_id is not null, trim string, find and get info
         if insurance_id is not None:
+            # Cut the string to get the id and convert the id to an int
             insurance_ids = [int(id) for id in insurance_id.split(",")]
+
+            # Iterate each id in the a array
             for id in insurance_ids:
+                # Get InsurancesMaster info from id
                 insurance = session.query(InsurancesMaster).get(int(id))
+
+                # If the insurance exists, get the necessary information
                 if insurance:
                     insurance_data = {
                         "insuranceId": insurance.insuranceId,
@@ -381,10 +434,16 @@ def get_car_cart(car_card_obj):
                         "insuranceValue": insurance.insuranceValue,
                     }
                     insurances.append(insurance_data)
+
+        # Get VehiclesMaster info form vehicle_id
         vehicle = session.query(VehiclesMaster).filter(
             VehiclesMaster.vehicleId == vehicle_id).first()
+
+        # If vehicle does not exist, return message
         if vehicle is None:
             return (False, "Vehicle Master dose not exit!")
+
+        # Otherwise get vehicle information saved into vehicle_data
         vehicle_data = {
             "vehicleId": vehicle.vehicleId,
             "vehicleName": vehicle.vehicleName,
@@ -401,13 +460,21 @@ def get_car_cart(car_card_obj):
             "vehicleRating": vehicle.vehicleRating,
             "vehicleConsumedEnergy": vehicle.vehicleConsumedEnergy
         }
+
+        # Assign information to object list
         list["vehicles"] = vehicle_data
         list["options"] = options
         list["insurances"] = insurances
         list["rentalStartDate"] = datetime_cv(car_cart.rentalStartDate)
         list["rentalEndDate"] = datetime_cv(car_cart.rentalEndDate)
+
+        # Convert python object to json string
         json_data = json.dumps(list, default=datetime_cv)
+
+        # Convert json string to json object
         data = json.loads(json_data)
+
+        # Add data object to result_list
         result_list.append(data)
 
     return result_list
